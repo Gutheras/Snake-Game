@@ -1,0 +1,219 @@
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Base theme colors */
+    --background: 230 35% 7%;
+    --foreground: 210 40% 98%;
+
+    --card: 230 35% 10%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 230 35% 7%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 170 100% 50%;
+    --primary-foreground: 0 0% 0%;
+
+    --secondary: 330 100% 50%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 230 25% 15%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 260 100% 60%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 100% 50%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 230 25% 20%;
+    --input: 230 25% 20%;
+    --ring: 170 100% 50%;
+
+    --radius: 0.5rem;
+
+    /* Game-specific colors */
+    --snake-head: 170 100% 50%;
+    --snake-body: 170 80% 45%;
+    --food: 330 100% 50%;
+    --grid: 230 25% 15%;
+    --grid-line: 230 25% 20%;
+    --score: 60 100% 50%;
+    --high-score: 330 100% 50%;
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 210 40% 98%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 212.7 26.8% 83.9%;
+    --sidebar-background: 240 5.9% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground;
+    overflow: hidden;
+  }
+}
+
+/* Game specific styles */
+@layer components {
+  .arcade-container {
+    @apply flex flex-col items-center justify-center min-h-screen p-4 bg-background overflow-hidden;
+    background-image: radial-gradient(circle at center, hsl(230, 35%, 10%) 0%, hsl(230, 35%, 7%) 100%);
+  }
+
+  .game-title {
+    @apply text-4xl md:text-6xl font-bold text-primary mb-6;
+    text-shadow: 0 0 10px hsl(var(--primary) / 0.8), 0 0 20px hsl(var(--primary) / 0.4);
+    font-family: 'Press Start 2P', system-ui, sans-serif;
+  }
+
+  .game-board {
+    @apply border-4 relative rounded-sm overflow-hidden;
+    border-color: hsl(var(--border));
+    box-shadow: 0 0 20px hsl(var(--primary) / 0.3), inset 0 0 10px hsl(var(--primary) / 0.1);
+    image-rendering: pixelated;
+  }
+
+  .game-grid {
+    @apply grid bg-muted;
+    grid-template-columns: repeat(var(--grid-size), 1fr);
+    grid-template-rows: repeat(var(--grid-size), 1fr);
+  }
+
+  .grid-cell {
+    @apply border border-grid-line;
+    aspect-ratio: 1/1;
+  }
+
+  .snake-segment {
+    @apply rounded-sm;
+    background-color: hsl(var(--snake-body));
+    box-shadow: 0 0 5px hsl(var(--snake-body) / 0.8);
+  }
+
+  .snake-head {
+    @apply rounded-sm;
+    background-color: hsl(var(--snake-head));
+    box-shadow: 0 0 8px hsl(var(--snake-head));
+  }
+
+  .food {
+    @apply rounded-full;
+    background-color: hsl(var(--food));
+    box-shadow: 0 0 8px hsl(var(--food));
+  }
+
+  .score-board {
+    @apply flex justify-between items-center w-full max-w-md text-xl p-2 rounded;
+    font-family: 'Press Start 2P', monospace;
+  }
+
+  .score {
+    @apply text-score;
+    text-shadow: 0 0 5px hsl(var(--score) / 0.5);
+  }
+
+  .high-score {
+    @apply text-high-score;
+    text-shadow: 0 0 5px hsl(var(--high-score) / 0.5);
+  }
+
+  .controls {
+    @apply flex flex-wrap justify-center gap-2 mt-4 text-sm text-muted-foreground;
+  }
+
+  .key {
+    @apply px-2 py-1 bg-muted rounded border border-border;
+  }
+
+  .game-over {
+    @apply absolute inset-0 flex flex-col items-center justify-center bg-background/90 z-50;
+    backdrop-filter: blur(2px);
+  }
+
+  .game-over-text {
+    @apply text-4xl font-bold text-destructive mb-4;
+    text-shadow: 0 0 10px hsl(var(--destructive) / 0.6);
+    font-family: 'Press Start 2P', system-ui, sans-serif;
+  }
+
+  .restart-button {
+    @apply px-4 py-2 text-lg font-bold bg-primary text-primary-foreground rounded-md;
+    box-shadow: 0 0 10px hsl(var(--primary) / 0.5);
+    transition: all 0.2s ease;
+  }
+
+  .restart-button:hover {
+    @apply bg-primary/90;
+    transform: scale(1.05);
+    box-shadow: 0 0 15px hsl(var(--primary) / 0.7);
+  }
+
+  .pixelated {
+    image-rendering: pixelated;
+  }
+
+  @keyframes pulse {
+    0%, 100% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.5;
+    }
+  }
+
+  .pulse-animation {
+    animation: pulse 1.5s infinite;
+  }
+}
