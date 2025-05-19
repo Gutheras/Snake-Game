@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { cn } from "@/lib/utils";
 
@@ -26,7 +25,7 @@ const GameBoard: React.FC<GameBoardProps> = ({
   const [highScore, setHighScore] = useState<number>(0);
   const [gameSpeed, setGameSpeed] = useState<number>(initialSpeed);
   const [isPaused, setIsPaused] = useState<boolean>(false);
-  
+
   // Use refs for values needed in event listeners and intervals
   const directionRef = useRef<Direction>(direction);
   const snakeRef = useRef<Position[]>(snake);
@@ -47,12 +46,16 @@ const GameBoard: React.FC<GameBoardProps> = ({
       x: Math.floor(Math.random() * gridSize),
       y: Math.floor(Math.random() * gridSize),
     };
-    
+
     // Ensure food doesn't appear on snake
-    if (snakeRef.current.some(segment => segment.x === newFood.x && segment.y === newFood.y)) {
+    if (
+      snakeRef.current.some(
+        (segment) => segment.x === newFood.x && segment.y === newFood.y
+      )
+    ) {
       return generateFood();
     }
-    
+
     return newFood;
   }, [gridSize]);
 
@@ -76,16 +79,16 @@ const GameBoard: React.FC<GameBoardProps> = ({
   useEffect(() => {
     const handleKeyPress = (e: KeyboardEvent) => {
       if (gameOverRef.current) return;
-      
+
       // Handle pause
       if (e.key === " " || e.key === "p" || e.key === "P") {
-        setIsPaused(prev => !prev);
+        setIsPaused((prev) => !prev);
         return;
       }
-      
+
       // Don't change direction if paused
       if (pausedRef.current) return;
-      
+
       // Prevent 180° turns
       switch (e.key) {
         case "ArrowUp":
@@ -118,17 +121,17 @@ const GameBoard: React.FC<GameBoardProps> = ({
   // Game loop
   useEffect(() => {
     if (isGameOver) return;
-    
+
     const moveSnake = () => {
       if (pausedRef.current || gameOverRef.current) return;
-      
-      setSnake(prevSnake => {
+
+      setSnake((prevSnake) => {
         // Create copy of snake
         const newSnake = [...prevSnake];
-        
+
         // Calculating new head position
         const head = { ...newSnake[0] };
-        
+
         // Move head based on direction
         switch (directionRef.current) {
           case "UP":
@@ -144,7 +147,7 @@ const GameBoard: React.FC<GameBoardProps> = ({
             head.x += 1;
             break;
         }
-        
+
         // Checking for wall collision
         if (
           head.x < 0 ||
@@ -156,39 +159,43 @@ const GameBoard: React.FC<GameBoardProps> = ({
           gameOverRef.current = true;
           return prevSnake;
         }
-        
+
         // Checking for self collision
-        if (newSnake.some(segment => segment.x === head.x && segment.y === head.y)) {
+        if (
+          newSnake.some(
+            (segment) => segment.x === head.x && segment.y === head.y
+          )
+        ) {
           setIsGameOver(true);
           gameOverRef.current = true;
           return prevSnake;
         }
-        
+
         // Add new head
         newSnake.unshift(head);
-        
+
         // Checking if snake ate food
         if (head.x === food.x && head.y === food.y) {
           // Increase score
-          setScore(prev => prev + 1);
-          
+          setScore((prev) => prev + 1);
+
           // Generate new food
           setFood(generateFood());
-          
+
           // Increasing speed slightly
-          setGameSpeed(prev => Math.max(prev * 0.95, 50));
+          setGameSpeed((prev) => Math.max(prev * 0.95, 50));
         } else {
           // Remove tail if snake didn't eat
           newSnake.pop();
         }
-        
+
         return newSnake;
       });
     };
-    
+
     // Set up game interval
     const gameInterval = setInterval(moveSnake, gameSpeed);
-    
+
     // Clear interval on cleanup
     return () => clearInterval(gameInterval);
   }, [food, generateFood, gridSize, isGameOver, gameSpeed]);
@@ -211,15 +218,17 @@ const GameBoard: React.FC<GameBoardProps> = ({
         <div className="score">Score: {score}</div>
         <div className="high-score">High: {highScore}</div>
       </div>
-      
+
       {/* Game container */}
       <div
         className={cn("game-board", className)}
-        style={{ 
-          width: `${Math.min(gridSize * 16, 480)}px`,
-          height: `${Math.min(gridSize * 16, 480)}px`,
-          '--grid-size': gridSize,
-        } as React.CSSProperties}
+        style={
+          {
+            width: `${Math.min(gridSize * 16, 480)}px`,
+            height: `${Math.min(gridSize * 16, 480)}px`,
+            "--grid-size": gridSize,
+          } as React.CSSProperties
+        }
       >
         <div className="game-grid h-full w-full">
           {/* Render snake */}
@@ -233,7 +242,7 @@ const GameBoard: React.FC<GameBoardProps> = ({
               }}
             />
           ))}
-          
+
           {/* Render food */}
           <div
             className="food"
@@ -243,7 +252,7 @@ const GameBoard: React.FC<GameBoardProps> = ({
             }}
           />
         </div>
-        
+
         {/* Game over overlay */}
         {isGameOver && (
           <div className="game-over">
@@ -254,16 +263,18 @@ const GameBoard: React.FC<GameBoardProps> = ({
             </button>
           </div>
         )}
-        
+
         {/* Pause overlay */}
         {isPaused && !isGameOver && (
           <div className="game-over">
-            <div className="text-2xl font-bold text-primary mb-4 pulse-animation">PAUSED</div>
+            <div className="text-2xl font-bold text-primary mb-4 pulse-animation">
+              PAUSED
+            </div>
             <div className="text-sm mb-4">Press P or Space to continue</div>
           </div>
         )}
       </div>
-      
+
       {/* Game Controls guide */}
       <div className="controls">
         <span className="key">↑</span>
@@ -281,6 +292,44 @@ const GameBoard: React.FC<GameBoardProps> = ({
         <span className="key">P</span>
         <span className="key">Space</span>
         <span className="mx-1">Pause</span>
+      </div>
+
+      {/* Touch Controls for mobile */}
+      <div className="touch-controls md:hidden flex flex-col items-center mt-4 gap-2">
+        <button
+          className="touch-btn"
+          onClick={() => setDirection("UP")}
+          aria-label="Up"
+          style={{ width: 48, height: 48 }}
+        >
+          ↑
+        </button>
+        <div className="flex gap-2">
+          <button
+            className="touch-btn"
+            onClick={() => setDirection("LEFT")}
+            aria-label="Left"
+            style={{ width: 48, height: 48 }}
+          >
+            ←
+          </button>
+          <button
+            className="touch-btn"
+            onClick={() => setDirection("DOWN")}
+            aria-label="Down"
+            style={{ width: 48, height: 48 }}
+          >
+            ↓
+          </button>
+          <button
+            className="touch-btn"
+            onClick={() => setDirection("RIGHT")}
+            aria-label="Right"
+            style={{ width: 48, height: 48 }}
+          >
+            →
+          </button>
+        </div>
       </div>
     </div>
   );
